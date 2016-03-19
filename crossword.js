@@ -390,12 +390,18 @@ var CrosswordUtils = {
                 } else {
                     html.push("<td class='" + css_class + "' title='" + r + ", " + c + "'>");					
                 }
+                if(css_class != 'no-border')
+                {
+                    html.push("<input class='" + css_class + "'type='text' id='" + r + "_" + c + "'onkeydown='limit(this);' onkeyup='limit(this);'>")
+                }
 
                 if(show_answers) {
                     html.push(char);
                 } else {
                     html.push("&nbsp;");								
                 }
+                answers[k] = {id: r+"_"+c,answer:char};
+                k++;
             }
             html.push("</tr>");
         }

@@ -28,7 +28,16 @@
     width:30px;
     height:30px;
 }
-
+#creationTable td{
+	border:1px solid black;
+    padding:0;
+    margin:0;
+    vertical-align:middle;
+    padding:0;
+    text-align:center;
+    width:30px;
+    height:30px;
+}
 .crossword .no-border {
     border:none;
 }
@@ -40,15 +49,98 @@
 #clues td {
     vertical-align:top;
 }
+input{
+	width: 74%;
+}
+#postCreation{
+	display: none;
+}
+.clue{
+	width: 500px;
+}
+.word{
+	width: 150px;
+}
 </style>
 <script type="text/javascript" src="crossword.js"></script>
 
 <script type="text/javascript">
-window.onload = function(){
-    // words[i] correlates to clues[i]
-    var words = ["dog", "cat", "bat", "elephant", "kangaroo"];
-    var clues = ["Man's best friend", "Likes to chase mice", "Flying mammal", "Has a trunk", "Large marsupial"];
-
+	var answers = [];
+	var k = 0;
+	var defaultWords = ["dog", "cat", "bat", "elephant", "kangaroo"];
+    var defaultClues = ["Man's best friend", "Likes to chase mice", "Flying mammal", "Has a trunk", "Large marsupial"];
+    var words = [];
+    var clues = [];
+    var table;
+    window.onload = function(){
+    	var row = 4;
+    	var columns = 2;
+    	table = document.getElementById("creationTable");
+    	var tbody = table.getElementsByTagName("tbody");
+    	for(var i=0;i<row;i++)
+    	{
+   			var elem = document.createElement('tr');
+    		var td1 = document.createElement('td');
+    		var td2 = document.createElement('td');
+    		var input1 = document.createElement('input');
+    		var input2 = document.createElement('input');
+    		input1.type = "text";
+    		input2.type = "text";
+    		input1.id = i + "_" + 1;
+    		input2.id = i + "_" + 2;
+    		input1.className = "word";
+    		input2.className = "clue";	
+    		td1.appendChild(input1);
+    		td2.appendChild(input2);
+    		elem.appendChild(td1);
+    		elem.appendChild(td2);
+    		tbody[0].appendChild(elem);
+    	}
+    };
+    function addRow(){
+    		var inputs = table.getElementsByTagName('input');
+    		var id = parseInt(inputs[inputs.length-1].id[0]);
+    		var elem = document.createElement('tr');
+    		var td1 = document.createElement('td');
+    		var td2 = document.createElement('td');
+    		var input1 = document.createElement('input');
+    		var input2 = document.createElement('input');
+    		input1.type = "text";
+    		input2.type = "text";
+    		input1.className = "word";
+    		input2.className = "clue";
+    		input1.id = id+1+"_"+1;
+    		input2.id = id+1+"_"+2;
+    		td1.appendChild(input1);
+    		td2.appendChild(input2);
+    		elem.appendChild(td1);
+    		elem.appendChild(td2);
+    		table.appendChild(elem);
+    }
+    function deleteRow(){
+    	var trs = table.getElementsByTagName('tr');
+    	trs[trs.length-1].remove();
+    }
+    function create(){
+    	var inputs = table.getElementsByTagName('input');
+    	var  i = 0;
+    	var j = 0;
+    	var k = 0;
+    	// console.log(inputs[2].value);
+    	for(k = 0;k<inputs.length;){
+    		words[i] = inputs[k].value;
+    		i++;
+    		k++;
+    		clues[j] = inputs[k].value;
+    		j++;
+    		k++;
+    	}
+       	createPuzzle();
+       	document.getElementById('create').style.display = 'none';
+    	document.getElementById('postCreation').style.display = 'block';
+    }
+function createPuzzle(){
+    
     // Create crossword object with the words and clues
     var cw = new Crossword(words, clues);
 
@@ -68,7 +160,7 @@ window.onload = function(){
     }
 
     // turn the crossword grid into HTML
-    var show_answers = true;
+    var show_answers = false;
     document.getElementById("crossword").innerHTML = CrosswordUtils.toHtml(grid, show_answers);
 
     // make a nice legend for the clues
@@ -85,26 +177,83 @@ function addLegendToPage(groups){
         document.getElementById(k).innerHTML = html.join("\n");
     }
 }
+function limit(element)
+{
+    var max_chars = 1;
+
+    if(element.value.length > max_chars) {
+        element.value = element.value.substr(1, max_chars);
+    }
+}
+function check()
+{	
+	var userAnswer = [];
+	var passed = 1;
+	var postCreationTable = document.getElementsByClassName("crossword"); 
+	var inputs = postCreationTable[0].getElementsByTagName('input');
+	for(var i=0;i<inputs.length;i++)
+	{
+		userAnswer[i] = {
+			id: inputs[i].id,
+			answer: inputs[i].value
+		}
+	}
+	console.log(userAnswer);
+	for(i=0;i<userAnswer.length;i++)
+	{
+
+		var obj = answers.filter(function(obj){
+			return (obj.id === userAnswer[i].id);
+		})[0];
+		console.log(obj.answer+" "+userAnswer[i].answer);
+		if(obj.id == userAnswer[i].id && obj.answer == userAnswer[i].answer){}
+		else
+		{
+			passed = 0;
+			alert("Wrong Bro.");
+			// var box = document.getElementById(obj.id).style.color = "red";
+			break;
+		}
+	}
+	if(passed)
+	{
+		alert("You won Man !!!!.Solved the puzzle correctly");
+	}
+}
 </script>
 
 </head>
 
 <body> 
-    <div id="crossword"></div>
-    <table id="clues">
-        <thead>
-            <tr>
-                <th>Across</th>
-                <th>Down</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><ul id="across"></ul></td>
-                <td><ul id="down"></ul></td>
-            </tr>
-        </tbody>
-    </table>
+	<div id="create">
+		<table id="creationTable">
+			<tr>
+				<td>Word</td>
+				<td>Hint</td>
+			</tr>
+		</table>
+		<button id="addRow" onclick="addRow()">Add Row</button>
+		<button id="deleteRow" onclick="deleteRow()">Delete Row</button>
+		<button id="createCrossWord" onclick="create()">Create Word Puzzle</button>
+	</div>
+	<div id="postCreation">
+	    <div id="crossword"></div>
+	    <table id="clues">
+	        <thead>
+	            <tr>
+	                <th>Across</th>
+	                <th>Down</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	            <tr>
+	                <td><ul id="across"></ul></td>
+	                <td><ul id="down"></ul></td>
+	            </tr>
+	        </tbody>
+	    </table>
+	    <button id="check" onclick="check()">Check My Answer</button>
+    </div>
 
 </body>
 </html>

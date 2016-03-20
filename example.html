@@ -69,7 +69,7 @@ input{
 	var k = 0;
 	var defaultWords = ["dog", "cat", "bat", "elephant", "kangaroo"];
     var defaultClues = ["Man's best friend", "Likes to chase mice", "Flying mammal", "Has a trunk", "Large marsupial"];
-    var words = [];
+    var words = [];  
     var clues = [];
     var table;
     window.onload = function(){
@@ -139,6 +139,15 @@ input{
        	document.getElementById('create').style.display = 'none';
     	document.getElementById('postCreation').style.display = 'block';
     }
+    function createWithDefault(){
+        words = defaultWords.concat();
+        clues = defaultClues.slice();
+        console.log(words);
+        console.log(clues);
+        createPuzzle();
+        document.getElementById('create').style.display = 'none';
+        document.getElementById('postCreation').style.display = 'block';
+    }
 function createPuzzle(){
     
     // Create crossword object with the words and clues
@@ -206,7 +215,7 @@ function check()
 			return (obj.id === userAnswer[i].id);
 		})[0];
 		console.log(obj.answer+" "+userAnswer[i].answer);
-		if(obj.id == userAnswer[i].id && obj.answer == userAnswer[i].answer){}
+		if(obj.id == userAnswer[i].id && obj.answer.toLowerCase() == userAnswer[i].answer.toLowerCase()){}
 		else
 		{
 			passed = 0;
@@ -234,7 +243,8 @@ function check()
 		</table>
 		<button id="addRow" onclick="addRow()">Add Row</button>
 		<button id="deleteRow" onclick="deleteRow()">Delete Row</button>
-		<button id="createCrossWord" onclick="create()">Create Word Puzzle</button>
+		<button id="createCrossWord" onclick="create()">Create New Word Puzzle</button>
+        <button id="createWithDefault" onclick="createWithDefault()">Create Default Puzzle</button>
 	</div>
 	<div id="postCreation">
 	    <div id="crossword"></div>
